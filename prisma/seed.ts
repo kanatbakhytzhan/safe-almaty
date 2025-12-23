@@ -399,7 +399,7 @@ async function main() {
       location.latitude,
       location.type,
       location.safetyRating,
-      location.entryCost || null,
+      (location as any).entryCost || null,
       location.isFree,
       location.address,
       location.addressKz,
