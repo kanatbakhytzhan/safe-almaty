@@ -1,0 +1,291 @@
+// Safe Almaty - Prisma Schema with PostGIS Support
+// Note: PostGIS geometry types are handled via Unsupported() type
+// Actual PostGIS functions are executed via raw SQL queries
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ============================================
+// USER MANAGEMENT
+// ============================================
+
+enum UserRole {
+  TOURIST
+  RESIDENT
+  ADMIN
+}
+
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  passwordHash  String    @map("password_hash")
+  name          String?
+  role          UserRole  @default(TOURIST)
+  phoneNumber   String?   @map("phone_number")
+  
+  // Emergency Medical Information
+  bloodType     String?   @map("blood_type")
+  allergies     String?   // Comma-separated list
+  chronicConditions String? @map("chronic_conditions") // Comma-separated list
+  emergencyContact String? @map("emergency_contact") // JSON string for multiple contacts
+  
+  // Safety Preferences
+  earthquakeAlerts Boolean @default(true) @map("earthquake_alerts")
+  airPollutionWarnings Boolean @default(true) @map("air_pollution_warnings")
+  
+  createdAt     DateTime  @default(now()) @map("created_at")
+  updatedAt     DateTime  @updatedAt @map("updated_at")
+
+  // Relations
+  savedLocations SavedLocation[]
+  emergencyLogs  EmergencyLog[]
+  createdLocations Location[] @relation("LocationCreator")
+
+  @@map("users")
+}
+
+// ============================================
+// LOCATIONS (Geospatial Core)
+// ============================================
+
+enum LocationType {
+  HOSPITAL
+  POLICE_STATION
+  FIRE_STATION
+  TOURIST_SPOT
+  SAFE_ZONE
+  EVACUATION_POINT
+  MOUNTAIN_SHELTER
+  RESCUE_POINT
+  RESTAURANT
+  HOTEL
+  TRANSPORT_HUB
+  MOUNTAIN_AREA
+  CITY_AREA
+  OTHER
+}
+
+enum SafetyRating {
+  VERY_SAFE      // 5 stars
+  SAFE           // 4 stars
+  MODERATE       // 3 stars
+  CAUTION        // 2 stars
+  UNSAFE         // 1 star
+}
+
+model Location {
+  id            String        @id @default(cuid())
+  name          String
+  nameKz        String?       @map("name_kz") // Kazakh name
+  nameRu        String?       @map("name_ru") // Russian name
+  description   String?       @db.Text
+  descriptionKz String?       @map("description_kz") @db.Text
+  descriptionRu String?       @map("description_ru") @db.Text
+  
+  // Geospatial: PostGIS Point (WGS84 - SRID 4326)
+  // Note: Prisma doesn't support geometry natively
+  // We use Unsupported type and handle via raw SQL
+  coordinates   Unsupported("geometry(Point, 4326)") // PostGIS Point
+  
+  // Location metadata
+  type          LocationType
+  safetyRating  SafetyRating  @map("safety_rating")
+  entryCost     Float?        @map("entry_cost") // In KZT
+  isFree        Boolean       @default(false) @map("is_free")
+  
+  // Contact information
+  address       String?
+  addressKz     String?       @map("address_kz")
+  addressRu     String?       @map("address_ru")
+  phoneNumber   String?       @map("phone_number")
+  website       String?
+  email         String?
+  
+  // Operational details
+  openingHours  String?       @map("opening_hours") // JSON string or text
+  is24Hours    Boolean        @default(false) @map("is_24_hours")
+  
+  // Additional metadata
+  imageUrl      String?       @map("image_url")
+  tags          String[]      // Array of tags for filtering
+  verified      Boolean       @default(false) // Admin-verified locations
+  
+  // Timestamps
+  createdAt     DateTime      @default(now()) @map("created_at")
+  updatedAt     DateTime      @updatedAt @map("updated_at")
+  createdById   String?       @map("created_by_id")
+  
+  // Relations
+  createdBy         User?                 @relation("LocationCreator", fields: [createdById], references: [id])
+  savedBy           SavedLocation[]
+  safetyTips        SafetyTip[]
+  emergencyContacts EmergencyContact[]    @relation("EmergencyLocation")
+  
+  @@index([type])
+  @@index([safetyRating])
+  @@index([verified])
+  // Spatial index will be created via raw SQL migration:
+  // CREATE INDEX idx_locations_coordinates ON locations USING GIST (coordinates);
+  @@map("locations")
+}
+
+// ============================================
+// SAFE ZONES (Polygon Areas)
+// ============================================
+
+model SafeZone {
+  id            String        @id @default(cuid())
+  name          String
+  description   String?       @db.Text
+  
+  // PostGIS Polygon for area boundaries
+  boundary      Unsupported("geometry(Polygon, 4326)") // PostGIS Polygon
+  
+  safetyLevel   SafetyRating  @map("safety_level")
+  isActive      Boolean       @default(true) @map("is_active")
+  
+  createdAt     DateTime      @default(now()) @map("created_at")
+  updatedAt     DateTime      @updatedAt @map("updated_at")
+  
+  @@map("safe_zones")
+  // Spatial index: CREATE INDEX idx_safe_zones_boundary ON safe_zones USING GIST (boundary);
+}
+
+// ============================================
+// SAFETY TIPS
+// ============================================
+
+enum SafetyTipCategory {
+  MOUNTAIN_SAFETY
+  CITY_SAFETY
+  TRANSPORT_SAFETY
+  EMERGENCY_PREPAREDNESS
+  CULTURAL_ETIQUETTE
+  WEATHER_SAFETY
+  GENERAL
+}
+
+model SafetyTip {
+  id            String            @id @default(cuid())
+  title         String
+  titleKz       String?           @map("title_kz")
+  titleRu       String?           @map("title_ru")
+  content       String            @db.Text
+  contentKz     String?           @map("content_kz") @db.Text
+  contentRu     String?           @map("content_ru") @db.Text
+  category      SafetyTipCategory
+  priority      Int               @default(0) // Higher = more important
+  
+  // Optional location association
+  locationId    String?           @map("location_id")
+  location      Location?         @relation(fields: [locationId], references: [id])
+  
+  imageUrl      String?           @map("image_url")
+  isActive      Boolean           @default(true) @map("is_active")
+  
+  createdAt     DateTime          @default(now()) @map("created_at")
+  updatedAt     DateTime          @updatedAt @map("updated_at")
+  
+  @@index([category])
+  @@index([isActive])
+  @@map("safety_tips")
+}
+
+// ============================================
+// EMERGENCY CONTACTS
+// ============================================
+
+enum EmergencyServiceType {
+  POLICE
+  AMBULANCE
+  FIRE_DEPARTMENT
+  MOUNTAIN_RESCUE
+  TOURIST_HELP_LINE
+  CONSULATE
+  OTHER
+}
+
+model EmergencyContact {
+  id            String                @id @default(cuid())
+  name          String
+  type          EmergencyServiceType
+  phoneNumber   String                @map("phone_number")
+  phoneNumberAlt String?              @map("phone_number_alt")
+  email         String?
+  website       String?
+  
+  // Optional location association
+  locationId    String?               @map("location_id")
+  location      Location?             @relation("EmergencyLocation", fields: [locationId], references: [id])
+  
+  // Service area (optional polygon)
+  serviceArea   Unsupported("geometry(Polygon, 4326)")? @map("service_area")
+  
+  isActive      Boolean               @default(true) @map("is_active")
+  priority      Int                   @default(0) // Display order
+  
+  createdAt     DateTime              @default(now()) @map("created_at")
+  updatedAt     DateTime              @updatedAt @map("updated_at")
+  
+  // Relations
+  emergencyLogs EmergencyLog[]
+  
+  @@index([type])
+  @@index([isActive])
+  @@map("emergency_contacts")
+}
+
+// ============================================
+// SOS & EMERGENCY LOGGING
+// ============================================
+
+model EmergencyLog {
+  id                String            @id @default(cuid())
+  userId            String?           @map("user_id")
+  user              User?              @relation(fields: [userId], references: [id])
+  
+  // Emergency location
+  coordinates       Unsupported("geometry(Point, 4326)") // User's location when SOS activated
+  
+  emergencyType     String?           @map("emergency_type")
+  description       String?           @db.Text
+  contactedService  String?           @map("contacted_service")
+  
+  emergencyContactId String?          @map("emergency_contact_id")
+  emergencyContact   EmergencyContact? @relation(fields: [emergencyContactId], references: [id])
+  
+  resolved          Boolean           @default(false)
+  resolvedAt        DateTime?         @map("resolved_at")
+  
+  createdAt         DateTime          @default(now()) @map("created_at")
+  
+  @@index([userId])
+  @@index([resolved])
+  @@index([createdAt])
+  @@map("emergency_logs")
+}
+
+// ============================================
+// USER SAVED LOCATIONS
+// ============================================
+
+model SavedLocation {
+  id          String    @id @default(cuid())
+  userId      String    @map("user_id")
+  user        User      @relation(fields: [userId], references: [id])
+  locationId  String    @map("location_id")
+  location    Location  @relation(fields: [locationId], references: [id])
+  notes       String?   @db.Text
+  createdAt   DateTime  @default(now()) @map("created_at")
+  
+  @@unique([userId, locationId])
+  @@index([userId])
+  @@map("saved_locations")
+}
+
