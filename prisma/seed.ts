@@ -368,9 +368,10 @@ async function main() {
   console.log(`   - ${mountainShelters.length} Mountain Shelters & Rescue Points`);
 
   for (const location of allLocations) {
+    const loc = location as any; // Cast to any to avoid TypeScript errors
     const id = `loc_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
     
-    const tagsArray = location.tags.map(t => `'${t.replace(/'/g, "''")}'`).join(',');
+    const tagsArray = loc.tags.map((t: string) => `'${t.replace(/'/g, "''")}'`).join(',');
     
     await prisma.$executeRawUnsafe(`
       INSERT INTO locations (
@@ -389,28 +390,28 @@ async function main() {
       )
     `,
       id,
-      location.name,
-      location.nameKz,
-      location.nameRu,
-      location.description,
-      location.descriptionKz,
-      location.descriptionRu,
-      location.longitude,
-      location.latitude,
-      location.type,
-      location.safetyRating,
-      (location as any).entryCost || null,
-      location.isFree,
-      location.address,
-      location.addressKz,
-      location.addressRu,
-      location.phoneNumber || null,
-      location.website || null,
+      loc.name,
+      loc.nameKz,
+      loc.nameRu,
+      loc.description,
+      loc.descriptionKz,
+      loc.descriptionRu,
+      loc.longitude,
+      loc.latitude,
+      loc.type,
+      loc.safetyRating,
+      loc.entryCost || null,
+      loc.isFree,
+      loc.address,
+      loc.addressKz,
+      loc.addressRu,
+      loc.phoneNumber || null,
+      loc.website || null,
       null, // email
       null, // opening_hours
-      location.is24Hours,
-      location.imageUrl || null, // image_url
-      location.verified,
+      loc.is24Hours,
+      loc.imageUrl || null, // image_url
+      loc.verified,
       null // created_by_id
     );
   }
