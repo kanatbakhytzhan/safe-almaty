@@ -112,7 +112,7 @@ function generateTouristSpots(count: number) {
       tags: ['tourist', spotType.toLowerCase(), 'almaty'],
       is24Hours: false,
       verified: i <= 10,
-      imageUrl: getImageForType('TOURIST_SPOT'),
+      imageUrl: '/images/tourist-spot.jpg',
     });
   }
   return locations;
@@ -149,7 +149,7 @@ function generatePoliceStations(count: number) {
       is24Hours: true,
       tags: ['police', 'emergency', 'security', district.toLowerCase()],
       verified: true,
-      imageUrl: getImageForType('POLICE_STATION'),
+      imageUrl: '/images/police.jpg',
     });
   }
   return locations;
@@ -186,7 +186,7 @@ function generateHospitals(count: number) {
       is24Hours: i <= 7,
       tags: ['hospital', 'medical', 'emergency', 'healthcare'],
       verified: true,
-      imageUrl: getImageForType('HOSPITAL'),
+      imageUrl: '/images/hospital.jpg',
     });
   }
   return locations;
@@ -284,6 +284,7 @@ function generateMountainShelters() {
       longitude: 76.95,
       type: 'RESCUE_POINT',
       phoneNumber: '+7 727 112',
+      imageUrl: '/images/medeu.jpg',
     },
     {
       name: 'Gorelnik Shelter',
@@ -320,6 +321,7 @@ function generateMountainShelters() {
       longitude: 76.95,
       type: 'RESCUE_POINT',
       phoneNumber: '+7 727 234 5679',
+      imageUrl: '/images/koktobe.jpg',
     },
   ];
 
@@ -341,6 +343,10 @@ function generateMountainShelters() {
 
 async function main() {
   console.log('🌱 Starting database seed...');
+
+  // Clear existing locations to prevent duplicates
+  await prisma.location.deleteMany({});
+  console.log('🧹 Cleared existing locations to prevent duplicates...');
 
   // Generate locations programmatically
   const touristSpots = generateTouristSpots(15);
