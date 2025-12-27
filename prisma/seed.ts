@@ -284,7 +284,7 @@ function generateMountainShelters() {
       longitude: 76.95,
       type: 'RESCUE_POINT',
       phoneNumber: '+7 727 112',
-      imageUrl: '/images/medeo.jpg',
+      imageUrl: '/images/medeu-rescue-base.jpg',
     },
     {
       name: 'Gorelnik Shelter',
@@ -297,7 +297,7 @@ function generateMountainShelters() {
       longitude: 76.98,
       type: 'MOUNTAIN_SHELTER',
       phoneNumber: null,
-      imageUrl: '/images/gorelnik.jpg',
+      imageUrl: '/images/gorelnik-shelter.jpg',
     },
     {
       name: 'Shymbulak Station',
@@ -310,7 +310,7 @@ function generateMountainShelters() {
       longitude: 76.97,
       type: 'RESCUE_POINT',
       phoneNumber: '+7 727 234 5678',
-      imageUrl: '/images/shymbulak.jpg',
+      imageUrl: '/images/shymbulak-station.jpg',
     },
     {
       name: 'Kok-Tobe Safety Post',
@@ -323,7 +323,7 @@ function generateMountainShelters() {
       longitude: 76.95,
       type: 'RESCUE_POINT',
       phoneNumber: '+7 727 234 5679',
-      imageUrl: '/images/koktobe.jpg',
+      imageUrl: '/images/kok-tobe.jpg',
     },
   ];
 
