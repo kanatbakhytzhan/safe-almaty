@@ -297,6 +297,7 @@ function generateMountainShelters() {
       longitude: 76.98,
       type: 'MOUNTAIN_SHELTER',
       phoneNumber: null,
+      imageUrl: '/images/gorelnik.jpg',
     },
     {
       name: 'Shymbulak Station',
@@ -309,6 +310,7 @@ function generateMountainShelters() {
       longitude: 76.97,
       type: 'RESCUE_POINT',
       phoneNumber: '+7 727 234 5678',
+      imageUrl: '/images/shymbulak.jpg',
     },
     {
       name: 'Kok-Tobe Safety Post',
