@@ -4,8 +4,11 @@ import { motion } from 'framer-motion';
 import Link from 'next/link';
 import Navbar from '@/components/layout/Navbar';
 import { MapPin, Shield, AlertCircle, ArrowRight } from 'lucide-react';
+import { useLanguage } from '@/context/LanguageContext';
 
 export default function LandingPage() {
+  const { t } = useLanguage();
+  
   return (
     <div className="relative min-h-screen bg-white">
       <Navbar />
@@ -30,7 +33,7 @@ export default function LandingPage() {
               transition={{ duration: 0.6 }}
               className="text-5xl sm:text-6xl md:text-7xl font-bold mb-6 text-slate-900 tracking-tight"
             >
-              Safe Almaty
+              {t.hero.title}
             </motion.h1>
 
             {/* Subtitle */}
@@ -40,7 +43,7 @@ export default function LandingPage() {
               transition={{ delay: 0.1, duration: 0.6 }}
               className="text-xl sm:text-2xl text-slate-600 mb-4 font-light leading-relaxed max-w-2xl mx-auto"
             >
-              Your trusted safety guide and emergency response system for Almaty, Kazakhstan
+              {t.hero.subtitle}
             </motion.p>
 
             {/* Kazakh Subtitle */}
@@ -50,7 +53,7 @@ export default function LandingPage() {
               transition={{ delay: 0.2, duration: 0.6 }}
               className="text-base sm:text-lg text-slate-500 mb-12 leading-relaxed"
             >
-              Алматы қауіпсіздік нұсқаулығы
+              {t.hero.subtitleKz}
             </motion.p>
 
             {/* CTA Buttons */}
@@ -66,7 +69,7 @@ export default function LandingPage() {
                   whileTap={{ scale: 0.98 }}
                   className="px-8 py-4 bg-slate-900 text-white rounded-xl font-medium text-lg shadow-lg hover:shadow-xl transition-all duration-300 flex items-center space-x-2"
                 >
-                  <span>Get Started</span>
+                  <span>{t.hero.getStarted}</span>
                   <ArrowRight className="w-5 h-5" />
                 </motion.button>
               </Link>
@@ -77,7 +80,7 @@ export default function LandingPage() {
                   className="px-8 py-4 bg-white text-slate-900 rounded-xl font-medium text-lg border-2 border-slate-200 hover:border-slate-300 transition-all duration-300 flex items-center space-x-2"
                 >
                   <MapPin className="w-5 h-5" />
-                  <span>Explore Map</span>
+                  <span>{t.hero.exploreMap}</span>
                 </motion.button>
               </Link>
             </motion.div>
@@ -90,9 +93,9 @@ export default function LandingPage() {
               className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto"
             >
               {[
-                { icon: MapPin, title: 'Interactive Map', desc: 'Explore safe zones & locations' },
-                { icon: AlertCircle, title: 'SOS System', desc: 'Emergency response at your fingertips' },
-                { icon: Shield, title: 'Safety Tips', desc: 'Expert guidance for Almaty' },
+                { icon: MapPin, title: t.hero.interactiveMap, desc: t.hero.interactiveMapDesc },
+                { icon: AlertCircle, title: t.hero.sosSystem, desc: t.hero.sosSystemDesc },
+                { icon: Shield, title: t.hero.safetyTips, desc: t.hero.safetyTipsDesc },
               ].map((feature, idx) => (
                 <motion.div
                   key={idx}
@@ -126,28 +129,26 @@ export default function LandingPage() {
             <div className="bg-white rounded-2xl p-8 shadow-sm border border-slate-100">
               <div className="flex items-center space-x-2 mb-4">
                 <MapPin className="w-6 h-6 text-slate-700" />
-                <h3 className="text-2xl font-semibold text-slate-900">For Tourists</h3>
+                <h3 className="text-2xl font-semibold text-slate-900">{t.hero.forTourists}</h3>
               </div>
               <p className="text-slate-600 leading-relaxed mb-4">
-                Discover safe locations, get cultural tips, and navigate Almaty with confidence. 
-                Find the best tourist spots, restaurants, and hotels with safety ratings.
+                {t.hero.forTouristsDesc}
               </p>
               <Link href="/locations" className="text-slate-900 hover:text-slate-700 font-medium inline-flex items-center space-x-1">
-                <span>Explore Locations</span>
+                <span>{t.hero.exploreLocations}</span>
                 <ArrowRight className="w-4 h-4" />
               </Link>
             </div>
             <div className="bg-white rounded-2xl p-8 shadow-sm border border-slate-100">
               <div className="flex items-center space-x-2 mb-4">
                 <Shield className="w-6 h-6 text-slate-700" />
-                <h3 className="text-2xl font-semibold text-slate-900">For Residents</h3>
+                <h3 className="text-2xl font-semibold text-slate-900">{t.hero.forResidents}</h3>
               </div>
               <p className="text-slate-600 leading-relaxed mb-4">
-                Access emergency contacts, report issues, and stay informed about your neighborhood. 
-                Get real-time safety updates and connect with local services.
+                {t.hero.forResidentsDesc}
               </p>
               <Link href="/safety-tips" className="text-slate-900 hover:text-slate-700 font-medium inline-flex items-center space-x-1">
-                <span>View Safety Tips</span>
+                <span>{t.hero.viewSafetyTips}</span>
                 <ArrowRight className="w-4 h-4" />
               </Link>
             </div>

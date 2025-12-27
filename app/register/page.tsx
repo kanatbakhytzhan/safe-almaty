@@ -6,9 +6,11 @@ import { motion } from 'framer-motion';
 import Link from 'next/link';
 import Navbar from '@/components/layout/Navbar';
 import { ArrowRight, Mail, Lock, User } from 'lucide-react';
+import { useLanguage } from '@/context/LanguageContext';
 
 export default function RegisterPage() {
   const router = useRouter();
+  const { t } = useLanguage();
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -87,9 +89,9 @@ export default function RegisterPage() {
         >
           <div className="text-center mb-8">
             <h1 className="text-4xl md:text-5xl font-bold mb-4 text-slate-900">
-              Join Safe Almaty
+              {t.auth.joinSafeAlmaty}
             </h1>
-            <p className="text-slate-600">Create your account</p>
+            <p className="text-slate-600">{t.auth.createAccount}</p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-5">
@@ -105,7 +107,7 @@ export default function RegisterPage() {
 
             <div>
               <label htmlFor="name" className="block text-sm font-medium text-slate-700 mb-2">
-                Full Name
+                {t.auth.fullName}
               </label>
               <div className="relative">
                 <User className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-slate-400" />
@@ -122,7 +124,7 @@ export default function RegisterPage() {
 
             <div>
               <label htmlFor="email" className="block text-sm font-medium text-slate-700 mb-2">
-                Email
+                {t.auth.email}
               </label>
               <div className="relative">
                 <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-slate-400" />
@@ -140,7 +142,7 @@ export default function RegisterPage() {
 
             <div>
               <label htmlFor="role" className="block text-sm font-medium text-slate-700 mb-2">
-                I am a
+                {t.auth.iAmA}
               </label>
               <select
                 id="role"
@@ -148,14 +150,14 @@ export default function RegisterPage() {
                 onChange={(e) => setFormData({ ...formData, role: e.target.value as 'TOURIST' | 'RESIDENT' })}
                 className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-lg text-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900 focus:border-transparent transition-all"
               >
-                <option value="TOURIST">Tourist</option>
-                <option value="RESIDENT">Resident</option>
+                <option value="TOURIST">{t.auth.tourist}</option>
+                <option value="RESIDENT">{t.auth.resident}</option>
               </select>
             </div>
 
             <div>
               <label htmlFor="password" className="block text-sm font-medium text-slate-700 mb-2">
-                Password
+                {t.auth.password}
               </label>
               <div className="relative">
                 <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-slate-400" />
@@ -174,7 +176,7 @@ export default function RegisterPage() {
 
             <div>
               <label htmlFor="confirmPassword" className="block text-sm font-medium text-slate-700 mb-2">
-                Confirm Password
+                {t.auth.confirmPassword}
               </label>
               <div className="relative">
                 <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-slate-400" />
@@ -197,16 +199,16 @@ export default function RegisterPage() {
               whileTap={{ scale: 0.98 }}
               className="w-full px-6 py-3 bg-slate-900 text-white rounded-lg font-semibold text-lg shadow-lg hover:shadow-xl transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2"
             >
-              <span>{loading ? 'Creating account...' : 'Create Account'}</span>
+              <span>{loading ? t.auth.creatingAccount : t.auth.createAccount}</span>
               {!loading && <ArrowRight className="w-5 h-5" />}
             </motion.button>
           </form>
 
           <div className="mt-6 text-center">
             <p className="text-slate-600 text-sm">
-              Already have an account?{' '}
+              {t.auth.alreadyHaveAccount}{' '}
               <Link href="/login" className="text-slate-900 hover:text-slate-700 font-medium">
-                Sign in
+                {t.auth.signIn}
               </Link>
             </p>
           </div>

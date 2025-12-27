@@ -3,20 +3,23 @@
 import { motion } from 'framer-motion';
 import { LocationType } from '@/constants/locations';
 import { MapPin, Shield, Building2, Heart } from 'lucide-react';
+import { useLanguage } from '@/context/LanguageContext';
 
 interface MapFiltersProps {
   activeFilters: Set<LocationType>;
   onToggleFilter: (type: LocationType) => void;
 }
 
-const filterCategories = [
-  { type: LocationType.TOURIST_SPOT, label: 'Tourist Spots', icon: MapPin },
-  { type: LocationType.POLICE_STATION, label: 'Police', icon: Shield },
-  { type: LocationType.HOSPITAL, label: 'Hospitals', icon: Heart },
-  { type: LocationType.SAFE_ZONE, label: 'Safe Zones', icon: Building2 },
-] as const;
-
 export default function MapFilters({ activeFilters, onToggleFilter }: MapFiltersProps) {
+  const { t } = useLanguage();
+  
+  const filterCategories = [
+    { type: LocationType.TOURIST_SPOT, label: t.map.touristSpots, icon: MapPin },
+    { type: LocationType.POLICE_STATION, label: t.map.police, icon: Shield },
+    { type: LocationType.HOSPITAL, label: t.map.hospitals, icon: Heart },
+    { type: LocationType.SAFE_ZONE, label: t.map.safeZones, icon: Building2 },
+  ] as const;
+  
   return (
     <motion.div
       initial={{ y: -100, opacity: 0 }}

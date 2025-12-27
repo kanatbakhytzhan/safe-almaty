@@ -5,6 +5,7 @@ import { MapPin, Star } from 'lucide-react';
 import type { Location } from '@/types/location';
 import { LOCATION_TYPE_LABELS } from '@/constants/locations';
 import Link from 'next/link';
+import { useLanguage } from '@/context/LanguageContext';
 
 interface LocationCardProps {
   location: Location;
@@ -39,7 +40,17 @@ const getSafetyRatingNumber = (rating: string): number => {
 };
 
 export default function LocationCard({ location, index = 0 }: LocationCardProps) {
+  const { language } = useLanguage();
   const safetyRating = getSafetyRatingNumber(location.safetyRating);
+  
+  // Get language-specific title and description
+  const title = language === 'ru' ? (location.nameRu || location.name) 
+    : language === 'kz' ? (location.nameKz || location.name) 
+    : location.name;
+  
+  const description = language === 'ru' ? (location.descriptionRu || location.description || '') 
+    : language === 'kz' ? (location.descriptionKz || location.description || '') 
+    : (location.description || '');
 
   return (
     <motion.div
@@ -53,7 +64,7 @@ export default function LocationCard({ location, index = 0 }: LocationCardProps)
           <div className="relative w-full aspect-[4/3] overflow-hidden bg-gray-200">
             <img
               src={location.imageUrl || 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&h=600&fit=crop'}
-              alt={location.name}
+              alt={title}
               className="w-full h-full object-cover"
             />
             {/* Type Badge Overlay */}
@@ -68,7 +79,7 @@ export default function LocationCard({ location, index = 0 }: LocationCardProps)
           <div className="p-6">
             {/* Title */}
             <h3 className="text-xl font-bold text-gray-900 mb-4 leading-tight">
-              {location.name}
+              {title}
             </h3>
 
             {/* Meta Row */}
@@ -88,9 +99,9 @@ export default function LocationCard({ location, index = 0 }: LocationCardProps)
             </div>
 
             {/* Description Preview */}
-            {location.description && (
+            {description && (
               <p className="text-gray-500 text-sm mb-4 line-clamp-2 leading-relaxed font-medium">
-                {location.description}
+                {description}
               </p>
             )}
 

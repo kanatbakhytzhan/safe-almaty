@@ -5,10 +5,13 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { useSession, signOut } from 'next-auth/react';
 import { Menu, X, Home, Map, Shield, MapPin, LogIn, User, LogOut } from 'lucide-react';
+import { useLanguage } from '@/context/LanguageContext';
+import LanguageSwitcher from '@/components/LanguageSwitcher';
 
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { data: session } = useSession();
+  const { t } = useLanguage();
 
   return (
     <motion.nav
@@ -32,10 +35,10 @@ export default function Navbar() {
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-1">
             {[
-              { href: '/', label: 'Home', icon: Home },
-              { href: '/map', label: 'Map', icon: Map },
-              { href: '/safety-tips', label: 'Safety Tips', icon: Shield },
-              { href: '/locations', label: 'Locations', icon: MapPin },
+              { href: '/', label: t.navbar.home, icon: Home },
+              { href: '/map', label: t.navbar.map, icon: Map },
+              { href: '/safety-tips', label: t.navbar.safetyTips, icon: Shield },
+              { href: '/locations', label: t.navbar.locations, icon: MapPin },
             ].map((item, idx) => (
               <Link
                 key={item.href}
@@ -50,6 +53,7 @@ export default function Navbar() {
 
           {/* Auth Buttons */}
           <div className="hidden md:flex items-center space-x-3">
+            <LanguageSwitcher />
             {session ? (
               <>
                 <Link
@@ -57,14 +61,14 @@ export default function Navbar() {
                   className="px-4 py-2 rounded-lg text-sm font-medium text-slate-700 hover:text-slate-900 hover:bg-slate-100 transition-all duration-200 flex items-center space-x-2"
                 >
                   <User className="w-4 h-4" />
-                  <span>Profile</span>
+                  <span>{t.navbar.profile}</span>
                 </Link>
                 <button
                   onClick={() => signOut({ callbackUrl: '/' })}
                   className="px-4 py-2 rounded-lg text-sm font-medium text-slate-700 hover:text-slate-900 hover:bg-slate-100 transition-all duration-200 flex items-center space-x-2"
                 >
                   <LogOut className="w-4 h-4" />
-                  <span>Logout</span>
+                  <span>{t.navbar.logout}</span>
                 </button>
               </>
             ) : (
@@ -74,13 +78,13 @@ export default function Navbar() {
                   className="px-4 py-2 rounded-lg text-sm font-medium text-slate-700 hover:text-slate-900 hover:bg-slate-100 transition-all duration-200 flex items-center space-x-2"
                 >
                   <LogIn className="w-4 h-4" />
-                  <span>Login</span>
+                  <span>{t.navbar.login}</span>
                 </Link>
                 <Link
                   href="/register"
                   className="px-4 py-2 rounded-lg text-sm font-semibold bg-slate-900 text-white hover:bg-slate-800 transition-all duration-200 flex items-center space-x-2"
                 >
-                  <span>Get Started</span>
+                  <span>{t.navbar.getStarted}</span>
                 </Link>
               </>
             )}
@@ -104,11 +108,14 @@ export default function Navbar() {
             exit={{ opacity: 0, height: 0 }}
             className="md:hidden py-4 space-y-2 border-t border-slate-200"
           >
+            <div className="px-4 pb-2">
+              <LanguageSwitcher />
+            </div>
             {[
-              { href: '/', label: 'Home', icon: Home },
-              { href: '/map', label: 'Map', icon: Map },
-              { href: '/safety-tips', label: 'Safety Tips', icon: Shield },
-              { href: '/locations', label: 'Locations', icon: MapPin },
+              { href: '/', label: t.navbar.home, icon: Home },
+              { href: '/map', label: t.navbar.map, icon: Map },
+              { href: '/safety-tips', label: t.navbar.safetyTips, icon: Shield },
+              { href: '/locations', label: t.navbar.locations, icon: MapPin },
             ].map((item) => (
               <Link
                 key={item.href}
@@ -129,7 +136,7 @@ export default function Navbar() {
                     className="block px-4 py-2 rounded-lg text-slate-700 hover:text-slate-900 hover:bg-slate-100 transition-all duration-200 text-center flex items-center justify-center space-x-2"
                   >
                     <User className="w-4 h-4" />
-                    <span>Profile</span>
+                    <span>{t.navbar.profile}</span>
                   </Link>
                   <button
                     onClick={() => {
@@ -139,7 +146,7 @@ export default function Navbar() {
                     className="w-full px-4 py-2 rounded-lg text-slate-700 hover:text-slate-900 hover:bg-slate-100 transition-all duration-200 text-center flex items-center justify-center space-x-2"
                   >
                     <LogOut className="w-4 h-4" />
-                    <span>Logout</span>
+                    <span>{t.navbar.logout}</span>
                   </button>
                 </>
               ) : (
@@ -150,14 +157,14 @@ export default function Navbar() {
                     className="block px-4 py-2 rounded-lg text-slate-700 hover:text-slate-900 hover:bg-slate-100 transition-all duration-200 text-center flex items-center justify-center space-x-2"
                   >
                     <LogIn className="w-4 h-4" />
-                    <span>Login</span>
+                    <span>{t.navbar.login}</span>
                   </Link>
                   <Link
                     href="/register"
                     onClick={() => setIsMenuOpen(false)}
                     className="block px-4 py-2 rounded-lg bg-slate-900 text-white text-center font-semibold hover:bg-slate-800 transition-all duration-200"
                   >
-                    Get Started
+                    {t.navbar.getStarted}
                   </Link>
                 </>
               )}

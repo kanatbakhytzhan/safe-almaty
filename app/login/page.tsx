@@ -7,9 +7,11 @@ import { motion } from 'framer-motion';
 import Link from 'next/link';
 import Navbar from '@/components/layout/Navbar';
 import { ArrowRight, Mail, Lock } from 'lucide-react';
+import { useLanguage } from '@/context/LanguageContext';
 
 export default function LoginPage() {
   const router = useRouter();
+  const { t } = useLanguage();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -69,9 +71,9 @@ export default function LoginPage() {
         >
           <div className="text-center mb-8">
             <h1 className="text-4xl md:text-5xl font-bold mb-4 text-slate-900">
-              Welcome Back
+              {t.auth.welcomeBack}
             </h1>
-            <p className="text-slate-600">Sign in to Safe Almaty</p>
+            <p className="text-slate-600">{t.auth.signInTo}</p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-6">
@@ -87,7 +89,7 @@ export default function LoginPage() {
 
             <div>
               <label htmlFor="email" className="block text-sm font-medium text-slate-700 mb-2">
-                Email
+                {t.auth.email}
               </label>
               <div className="relative">
                 <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-slate-400" />
@@ -105,7 +107,7 @@ export default function LoginPage() {
 
             <div>
               <label htmlFor="password" className="block text-sm font-medium text-slate-700 mb-2">
-                Password
+                {t.auth.password}
               </label>
               <div className="relative">
                 <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-slate-400" />
@@ -128,16 +130,16 @@ export default function LoginPage() {
               whileTap={{ scale: 0.98 }}
               className="w-full px-6 py-3 bg-slate-900 text-white rounded-lg font-semibold text-lg shadow-lg hover:shadow-xl transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2"
             >
-              <span>{loading ? 'Signing in...' : 'Sign In'}</span>
+              <span>{loading ? t.auth.signingIn : t.auth.signIn}</span>
               {!loading && <ArrowRight className="w-5 h-5" />}
             </motion.button>
           </form>
 
           <div className="mt-6 text-center">
             <p className="text-slate-600 text-sm">
-              Don't have an account?{' '}
+              {t.auth.dontHaveAccount}{' '}
               <Link href="/register" className="text-slate-900 hover:text-slate-700 font-medium">
-                Sign up
+                {t.auth.signUp}
               </Link>
             </p>
           </div>

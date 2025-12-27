@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import SessionProvider from "@/components/providers/SessionProvider";
+import { LanguageProvider } from "@/context/LanguageContext";
 import SOSButton from "@/components/emergency/SOSButton";
 
 export const metadata: Metadata = {
@@ -16,10 +17,12 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className="antialiased">
-        <SessionProvider>
-          {children}
-          <SOSButton />
-        </SessionProvider>
+        <LanguageProvider>
+          <SessionProvider>
+            {children}
+            <SOSButton />
+          </SessionProvider>
+        </LanguageProvider>
       </body>
     </html>
   );
