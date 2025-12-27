@@ -204,6 +204,24 @@ function MapZoomHandler({
   return null;
 }
 
+// Component to handle route bounds zoom
+function RouteZoomHandler({ 
+  routeCoordinates 
+}: { 
+  routeCoordinates: [number, number][];
+}) {
+  const map = useMap();
+
+  useEffect(() => {
+    if (routeCoordinates.length > 0) {
+      const bounds = L.latLngBounds(routeCoordinates);
+      map.fitBounds(bounds, { padding: [100, 100] });
+    }
+  }, [routeCoordinates, map]);
+
+  return null;
+}
+
 export default function Map() {
   const [locations, setLocations] = useState<Location[]>([]);
   const [loading, setLoading] = useState(true);
@@ -237,6 +255,9 @@ export default function Map() {
   const [hikingElapsedTime, setHikingElapsedTime] = useState(0);
   const [currentAltitude, setCurrentAltitude] = useState<number | null>(null);
   const [showMountainTracker, setShowMountainTracker] = useState(false);
+
+  // Route state
+  const [routeCoordinates, setRouteCoordinates] = useState<[number, number][]>([]);
 
   useEffect(() => {
     const fetchLocations = async () => {
@@ -274,6 +295,8 @@ export default function Map() {
     setSelectedLocation(location);
     // Clear nearest help locator when clicking a marker
     clearNearestHelp();
+    // Clear route when selecting a new location
+    clearRoute();
   };
 
   const clearNearestHelp = () => {
@@ -535,6 +558,39 @@ export default function Map() {
     return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
   };
 
+  // Fetch route from OSRM API
+  const fetchRoute = async (startLat: number, startLng: number, endLat: number, endLng: number) => {
+    try {
+      const url = `https://router.project-osrm.org/route/v1/driving/${startLng},${startLat};${endLng},${endLat}?overview=full&geometries=geojson`;
+      const response = await fetch(url);
+      
+      if (!response.ok) {
+        throw new Error('Failed to fetch route');
+      }
+
+      const data = await response.json();
+      
+      if (data.code === 'Ok' && data.routes && data.routes.length > 0) {
+        const route = data.routes[0];
+        const coordinates = route.geometry.coordinates.map((coord: [number, number]) => [coord[1], coord[0]] as [number, number]);
+        setRouteCoordinates(coordinates);
+        return coordinates;
+      } else {
+        throw new Error('No route found');
+      }
+    } catch (error) {
+      console.error('Error fetching route:', error);
+      showToast('Failed to fetch route. Please try again.');
+      setRouteCoordinates([]);
+      return null;
+    }
+  };
+
+  // Clear route
+  const clearRoute = () => {
+    setRouteCoordinates([]);
+  };
+
   if (loading) {
     return (
       <div className="flex items-center justify-center h-screen bg-slate-900">
@@ -577,6 +633,8 @@ export default function Map() {
           userPosition={userPosition} 
           nearestLocation={nearestLocation || nearestEvacuationPoint} 
         />
+
+        <RouteZoomHandler routeCoordinates={routeCoordinates} />
 
         {filteredLocations.map((location) => (
           <Marker
@@ -633,6 +691,18 @@ export default function Map() {
               weight: 4,
               dashArray: '15, 10',
               opacity: 0.9,
+            }}
+          />
+        )}
+
+        {/* Route Polyline */}
+        {routeCoordinates.length > 0 && (
+          <Polyline
+            positions={routeCoordinates}
+            pathOptions={{
+              color: 'blue',
+              weight: 4,
+              opacity: 0.8,
             }}
           />
         )}
@@ -695,7 +765,19 @@ export default function Map() {
       {/* Location Details Sidebar */}
       <LocationDetailsSidebar
         location={selectedLocation}
-        onClose={() => setSelectedLocation(null)}
+        onClose={() => {
+          setSelectedLocation(null);
+          clearRoute();
+        }}
+        userPosition={userPosition}
+        onShowRoute={async (targetLat: number, targetLng: number) => {
+          if (!userPosition) {
+            showToast('Please enable location services to show route');
+            return;
+          }
+          const [userLat, userLng] = userPosition;
+          await fetchRoute(userLat, userLng, targetLat, targetLng);
+        }}
       />
 
       {/* Map Controls Overlay */}

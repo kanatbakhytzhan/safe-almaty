@@ -1,4 +1,4 @@
-import { PrismaClient } from '@prisma/client';
+          import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
@@ -280,8 +280,8 @@ function generateMountainShelters() {
       description: 'Main rescue base for mountain emergencies. 24/7 rescue services available.',
       descriptionKz: 'Тау төтенше жағдайлары үшін негізгі құтқару базасы. 24/7 құтқару қызметтері қолжетімді.',
       descriptionRu: 'Главная спасательная база для горных чрезвычайных ситуаций. Службы спасения доступны 24/7.',
-      latitude: 43.15,
-      longitude: 76.95,
+      latitude: 43.1574,
+      longitude: 77.0590,
       type: 'RESCUE_POINT',
       phoneNumber: '+7 727 112',
       imageUrl: '/images/medeu.jpg',
@@ -319,8 +319,8 @@ function generateMountainShelters() {
       description: 'Safety monitoring post on Kok-Tobe mountain. First aid and emergency communication available.',
       descriptionKz: 'Көк-Төбе тауындағы қауіпсіздікті бақылау посты. Алғашқы медициналық көмек және төтенше байланыс қолжетімді.',
       descriptionRu: 'Пост мониторинга безопасности на горе Кок-Тобе. Доступна первая помощь и экстренная связь.',
-      latitude: 43.25,
-      longitude: 76.95,
+      latitude: 43.2336,
+      longitude: 76.9763,
       type: 'RESCUE_POINT',
       phoneNumber: '+7 727 234 5679',
       imageUrl: '/images/koktobe.jpg',

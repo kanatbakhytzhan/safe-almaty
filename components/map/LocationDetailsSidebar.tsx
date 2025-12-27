@@ -8,6 +8,8 @@ import { X, Star, MapPin, Phone, Globe, DollarSign, Clock, Navigation } from 'lu
 interface LocationDetailsSidebarProps {
   location: Location | null;
   onClose: () => void;
+  userPosition: [number, number] | null;
+  onShowRoute: (targetLat: number, targetLng: number) => Promise<void>;
 }
 
 const SafetyRatingStars = ({ rating }: { rating: string }) => {
@@ -46,12 +48,20 @@ const SafetyRatingStars = ({ rating }: { rating: string }) => {
   );
 };
 
-export default function LocationDetailsSidebar({ location, onClose }: LocationDetailsSidebarProps) {
+export default function LocationDetailsSidebar({ location, onClose, userPosition, onShowRoute }: LocationDetailsSidebarProps) {
   if (!location) return null;
 
   const getDirectionsUrl = () => {
     const { latitude, longitude } = location;
     return `https://www.google.com/maps/dir/?api=1&destination=${latitude},${longitude}`;
+  };
+
+  const handleShowRoute = async () => {
+    if (!userPosition) {
+      alert('Please enable location services to show route');
+      return;
+    }
+    await onShowRoute(location.latitude, location.longitude);
   };
 
   return (
@@ -183,18 +193,32 @@ export default function LocationDetailsSidebar({ location, onClose }: LocationDe
               )}
             </div>
 
-            {/* Get Directions Button */}
-            <motion.a
-              href={getDirectionsUrl()}
-              target="_blank"
-              rel="noopener noreferrer"
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              className="block w-full px-6 py-4 bg-slate-900 text-white rounded-xl font-semibold text-center shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center space-x-2"
-            >
-              <Navigation className="w-5 h-5" />
-              <span>Get Directions</span>
-            </motion.a>
+            {/* Action Buttons */}
+            <div className="flex flex-col gap-3">
+              {/* Show Route Button */}
+              <motion.button
+                onClick={handleShowRoute}
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                className="w-full px-6 py-4 bg-blue-600 text-white rounded-xl font-semibold text-center shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center space-x-2"
+              >
+                <Navigation className="w-5 h-5" />
+                <span>📍 Show Route</span>
+              </motion.button>
+
+              {/* Get Directions Button */}
+              <motion.a
+                href={getDirectionsUrl()}
+                target="_blank"
+                rel="noopener noreferrer"
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                className="block w-full px-6 py-4 bg-slate-900 text-white rounded-xl font-semibold text-center shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center space-x-2"
+              >
+                <Navigation className="w-5 h-5" />
+                <span>Get Directions</span>
+              </motion.a>
+            </div>
           </div>
         </motion.div>
       </motion.div>
