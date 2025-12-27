@@ -227,7 +227,15 @@ export default function Map() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [activeFilters, setActiveFilters] = useState<Set<LocationType>>(
-    new Set([LocationType.TOURIST_SPOT, LocationType.POLICE_STATION, LocationType.HOSPITAL, LocationType.SAFE_ZONE])
+    new Set([
+      LocationType.TOURIST_SPOT, 
+      LocationType.POLICE_STATION, 
+      LocationType.HOSPITAL, 
+      LocationType.SAFE_ZONE,
+      LocationType.EVACUATION_POINT,
+      LocationType.RESCUE_POINT,
+      LocationType.MOUNTAIN_SHELTER,
+    ])
   );
   const [selectedLocation, setSelectedLocation] = useState<Location | null>(null);
   

@@ -62,6 +62,7 @@ export async function GET() {
         ST_X(coordinates::geometry) AS longitude
       FROM locations
       ORDER BY created_at DESC
+      -- No LIMIT clause - fetch ALL locations
     `;
 
     // Transform the data to match our Location type

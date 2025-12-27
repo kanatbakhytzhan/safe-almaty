@@ -2,7 +2,7 @@
 
 import { motion } from 'framer-motion';
 import { LocationType } from '@/constants/locations';
-import { MapPin, Shield, Building2, Heart } from 'lucide-react';
+import { MapPin, Shield, Building2, Heart, Home, Mountain, AlertCircle } from 'lucide-react';
 import { useLanguage } from '@/context/LanguageContext';
 
 interface MapFiltersProps {
@@ -18,6 +18,9 @@ export default function MapFilters({ activeFilters, onToggleFilter }: MapFilters
     { type: LocationType.POLICE_STATION, label: t.map.police, icon: Shield },
     { type: LocationType.HOSPITAL, label: t.map.hospitals, icon: Heart },
     { type: LocationType.SAFE_ZONE, label: t.map.safeZones, icon: Building2 },
+    { type: LocationType.EVACUATION_POINT, label: 'Evacuation Points', icon: Home },
+    { type: LocationType.RESCUE_POINT, label: 'Rescue Points', icon: AlertCircle },
+    { type: LocationType.MOUNTAIN_SHELTER, label: 'Mountain Shelters', icon: Mountain },
   ] as const;
   
   return (
