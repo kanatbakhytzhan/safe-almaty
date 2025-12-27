@@ -284,7 +284,7 @@ function generateMountainShelters() {
       longitude: 76.95,
       type: 'RESCUE_POINT',
       phoneNumber: '+7 727 112',
-      imageUrl: '/images/medeu.jpg',
+      imageUrl: '/images/medeo.jpg',
     },
     {
       name: 'Gorelnik Shelter',
